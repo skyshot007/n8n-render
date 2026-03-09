@@ -13,6 +13,5 @@ USER node
 # 5. Move into that safe local data folder
 WORKDIR /home/node/.n8n
 
-# 6. Initialize a blank project and install the library locally!
-# (Because this is an isolated folder, npm works perfectly here without crashing)
-RUN npm init -y && npm install technicalindicators
+# 6. Install the library directly (skipping the init command to avoid the naming error!)
+RUN npm install technicalindicators
