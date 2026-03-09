@@ -1,14 +1,18 @@
 # 1. Start with the official n8n image
 FROM docker.n8n.io/n8nio/n8n:latest
 
-# 2. Switch to the root user so we have permission to install things
+# 2. Switch to root just to set up folder permissions
 USER root
 
-# 3. Install the package globally (This avoids the n8n 'catalog' conflict)
-RUN npm install -g technicalindicators
+# 3. Create the local n8n data folder and give the 'node' user full ownership
+RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
 
-# 4. Tell Node.js exactly where global packages are stored
-ENV NODE_PATH=/usr/local/lib/node_modules
-
-# 5. Switch back to the safe 'node' user that n8n requires
+# 4. Switch back to the safe 'node' user
 USER node
+
+# 5. Move into that safe local data folder
+WORKDIR /home/node/.n8n
+
+# 6. Initialize a blank project and install the library locally!
+# (Because this is an isolated folder, npm works perfectly here without crashing)
+RUN npm init -y && npm install technicalindicators
