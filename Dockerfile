@@ -1,17 +1,14 @@
 # 1. Start with the official n8n image
 FROM docker.n8n.io/n8nio/n8n:latest
 
-# 2. Switch to root just to set up folder permissions
+# 2. Switch to root to install OS-level packages
 USER root
 
-# 3. Create the local n8n data folder and give the 'node' user full ownership
-RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
+# 3. Install Python, pre-compiled Pandas, and Requests (fast and safe for Alpine Linux)
+RUN apk add --no-cache python3 py3-pip py3-pandas py3-requests
 
-# 4. Switch back to the safe 'node' user
+# 4. Install the Python Technical Analysis (ta) library globally
+RUN pip3 install ta --break-system-packages
+
+# 5. Switch back to the safe 'node' user
 USER node
-
-# 5. Move into that safe local data folder
-WORKDIR /home/node/.n8n
-
-# 6. Install the library directly (skipping the init command to avoid the naming error!)
-RUN npm install technicalindicators
